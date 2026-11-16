@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>前庭感覚バランスリハビリ運動ガイド</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .body-svg { transition: all 0.4s ease; }
+  </style>
+</head>
+<body class="bg-indigo-50 min-h-screen font-sans">
+
+<div class="max-w-2xl mx-auto px-4 py-8">
+
+  <!-- Header -->
+  <div class="text-center mb-6">
+    <div class="text-4xl mb-2">🌀</div>
+    <h1 class="text-2xl font-bold text-indigo-900">前庭感覚バランスリハビリ</h1>
+    <p class="text-indigo-500 text-sm mt-1">BPPV頭位変換法ガイド・めまいトラッキング</p>
+  </div>
+
+  <!-- Medical Disclaimer -->
+  <div class="bg-red-50 border border-red-300 rounded-xl p-4 mb-6">
+    <p class="text-xs font-bold text-red-700">⚠️ 医療免責</p>
+    <p class="text-xs text-red-600 mt-1">このアプリは教育目的です。めまいの症状がある場合は必ず耳鼻科・神経内科を受診してください。実施前は安全な環境で行い、症状悪化時は即中止してください。</p>
+  </div>
+
+  <!-- Tabs -->
+  <div class="flex bg-white rounded-xl shadow-sm border border-indigo-100 overflow-hidden mb-6" role="tablist">
+    <button class="tab-btn flex-1 py-2.5 text-xs font-semibold text-indigo-700 bg-indigo-100 border-b-2 border-indigo-600" data-tab="epley" role="tab" aria-selected="true">エプリー法</button>
+    <button class="tab-btn flex-1 py-2.5 text-xs font-semibold text-stone-500 hover:bg-stone-50" data-tab="semont" role="tab" aria-selected="false">シーモント法</button>
+    <button class="tab-btn flex-1 py-2.5 text-xs font-semibold text-stone-500 hover:bg-stone-50" data-tab="brandt" role="tab" aria-selected="false">Brandt-Daroff</button>
+    <button class="tab-btn flex-1 py-2.5 text-xs font-semibold text-stone-500 hover:bg-stone-50" data-tab="tracking" role="tab" aria-selected="false">症状記録</button>
+  </div>
+
+  <!-- Otolith Info -->
+  <div class="bg-indigo-900 text-white rounded-xl p-4 mb-6">
+    <p class="text-xs font-bold text-indigo-300 mb-1">💡 耳石（じせき）について</p>
+    <p class="text-xs leading-relaxed text-indigo-100">BPPVは内耳の耳石器から剥がれた耳石（炭酸カルシウムの結晶）が半規管に迷い込むことで起こります。頭を動かすたびに耳石が移動し、異常な信号を脳に送ることでめまいが生じます。頭位変換法はこの耳石を正しい位置に戻す手技です。</p>
+  </div>
+
+  <!-- Epley Tab -->
+  <div id="tab-epley" class="tab-content">
+    <h2 class="text-sm font-bold text-indigo-800 mb-3">エプリー法（Epley Maneuver）</h2>
+    <p class="text-xs text-stone-500 mb-4">後半規管型BPPVに最も効果的。各ポジションで30秒保持します。</p>
+    <div id="epley-steps" class="space-y-4"></div>
+  </div>
+
+  <!-- Semont Tab -->
+  <div id="tab-semont" class="tab-content hidden">
+    <h2 class="text-sm font-bold text-indigo-800 mb-3">シーモント法（Semont Maneuver）</h2>
+    <p class="text-xs text-stone-500 mb-4">後半規管型BPPVに有効。素早い体位変換が特徴です。各ポジション30秒保持。</p>
+    <div id="semont-steps" class="space-y-4"></div>
+  </div>
+
+  <!-- Brandt-Daroff Tab -->
+  <div id="tab-brandt" class="tab-content hidden">
+    <h2 class="text-sm font-bold text-indigo-800 mb-3">Brandt-Daroff 体操</h2>
+    <p class="text-xs text-stone-500 mb-4">毎日の予防・改善体操。1セット5分、1日3セット推奨。</p>
+    <div id="brandt-steps" class="space-y-4"></div>
+  </div>
+
+  <!-- Tracking Tab -->
+  <div id="tab-tracking" class="tab-content hidden">
+    <div class="bg-white rounded-xl border border-indigo-100 p-5 shadow-sm mb-5">
+      <h2 class="text-sm font-bold text-stone-700 mb-4">症状を記録する</h2>
+      <div class="space-y-4">
+        <div>
+          <label for="dizziness-score" class="text-xs font-semibold text-stone-600">めまいの強さ（0〜10）</label>
+          <div class="flex items-center gap-3 mt-1">
+            <input type="range" id="dizziness-score" min="0" max="10" value="5" class="flex-1 accent-indigo-600" aria-label="めまいスコア">
+            <span id="dizziness-val" class="text-lg font-bold text-indigo-700 w-6">5</span>
+          </div>
+        </div>
+        <div>
+          <label for="nausea-score" class="text-xs font-semibold text-stone-600">吐き気の強さ（0〜10）</label>
+          <div class="flex items-center gap-3 mt-1">
+            <input type="range" id="nausea-score" min="0" max="10" value="3" class="flex-1 accent-purple-600" aria-label="吐き気スコア">
+            <span id="nausea-val" class="text-lg font-bold text-purple-700 w-6">3</span>
+          </div>
+        </div>
+        <button id="log-symptom-btn" class="w-full py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-semibold hover:bg-indigo-700">記録を保存</button>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-xl border border-indigo-100 p-5 shadow-sm">
+      <h2 class="text-sm font-bold text-stone-700 mb-4">週次改善グラフ</h2>
+      <svg id="symptom-chart" viewBox="0 0 400 190" class="w-full" aria-label="症状の週次グラフ" role="img">
+        <rect width="400" height="190" fill="#f8fafc" rx="8"/>
+        <line x1="40" y1="20" x2="40" y2="150" stroke="#e2e8f0" stroke-width="1"/>
+        <line x1="40" y1="150" x2="380" y2="150" stroke="#e2e8f0" stroke-width="1"/>
+        <line x1="40" y1="20" x2="380" y2="20" stroke="#e2e8f0" stroke-width="0.5" stroke-dasharray="4"/>
+        <line x1="40" y1="85" x2="380" y2="85" stroke="#e2e8f0" stroke-width="0.5" stroke-dasharray="4"/>
+        <text x="30" y="24" font-size="9" fill="#94a3b8" text-anchor="end">10</text>
+        <text x="30" y="88" font-size="9" fill="#94a3b8" text-anchor="end">5</text>
+        <text x="30" y="154" font-size="9" fill="#94a3b8" text-anchor="end">0</text>
+        <!-- Legend -->
+        <circle cx="50" cy="168" r="4" fill="#6366f1"/>
+        <text x="58" y="172" font-size="9" fill="#6366f1">めまい</text>
+        <circle cx="110" cy="168" r="4" fill="#a855f7"/>
+        <text x="118" y="172" font-size="9" fill="#a855f7">吐き気</text>
+        <g id="symptom-chart-data"></g>
+      </svg>
+      <div id="symptom-history" class="mt-4 space-y-1"></div>
+    </div>
+  </div>
+
+  <!-- Step Timer Modal -->
+  <div id="step-timer-modal" class="fixed inset-0 bg-black/60 flex items-center justify-center z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="step-timer-title">
+    <div class="bg-white rounded-2xl p-6 mx-4 max-w-sm w-full text-center shadow-2xl">
+      <p id="step-timer-title" class="text-base font-bold text-stone-800 mb-1"></p>
+      <p id="step-timer-inst" class="text-xs text-stone-500 mb-4"></p>
+      <div class="text-5xl font-mono font-bold text-indigo-600 mb-3" id="step-timer-display">30</div>
+      <div class="w-full bg-stone-100 rounded-full h-2 mb-5">
+        <div id="step-timer-bar" class="h-2 bg-indigo-500 rounded-full transition-all" style="width:100%"></div>
+      </div>
+      <button id="step-timer-close" class="w-full py-2 rounded-lg bg-indigo-100 text-indigo-700 text-sm font-semibold hover:bg-indigo-200">閉じる</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const EPLEY_STEPS = [
+  {
+    title: "ステップ1: 患側向き座位",
+    duration: 30,
+    instruction: "ベッドの端に座り、患側（めまいのする側）を向いて頭を45度回転させる。",
+    svg: `<svg viewBox="0 0 120 100" class="w-24 h-20 mx-auto">
+      <ellipse cx="60" cy="20" rx="12" ry="12" fill="#c7d2fe" stroke="#6366f1" stroke-width="2"/>
+      <line x1="60" y1="32" x2="60" y2="65" stroke="#6366f1" stroke-width="3" stroke-linecap="round"/>
+      <line x1="60" y1="45" x2="35" y2="55" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="60" y1="45" x2="85" y2="55" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="60" y1="65" x2="45" y2="90" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="60" y1="65" x2="75" y2="90" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="52" y1="12" x2="45" y2="5" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" marker-end="url(#arrow)"/>
+      <text x="30" y="78" font-size="9" fill="#6366f1">座位</text>
+    </svg>`
+  },
+  {
+    title: "ステップ2: 仰向け・患側頭部回転",
+    duration: 30,
+    instruction: "素早く仰向けに倒れ、頭を患側に45度向けたまま保持する。めまいが起きたら治まるまで待つ。",
+    svg: `<svg viewBox="0 0 140 80" class="w-32 h-16 mx-auto">
+      <ellipse cx="20" cy="30" rx="11" ry="11" fill="#c7d2fe" stroke="#6366f1" stroke-width="2"/>
+      <line x1="31" y1="30" x2="80" y2="32" stroke="#6366f1" stroke-width="3" stroke-linecap="round"/>
+      <line x1="55" y1="32" x2="52" y2="55" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="55" y1="32" x2="58" y2="55" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="80" y1="32" x2="78" y2="62" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="80" y1="32" x2="102" y2="55" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="13" y1="22" x2="8" y2="17" stroke="#f59e0b" stroke-width="2" stroke-linecap="round"/>
+      <text x="85" y="72" font-size="9" fill="#6366f1">仰向け</text>
+    </svg>`
+  },
+  {
+    title: "ステップ3: 反対側へ頭部回転",
+    duration: 30,
+    instruction: "頭を反対側（健側）に90度回転させる。体もやや横向きになってよい。",
+    svg: `<svg viewBox="0 0 140 80" class="w-32 h-16 mx-auto">
+      <ellipse cx="20" cy="30" rx="11" ry="11" fill="#c7d2fe" stroke="#6366f1" stroke-width="2"/>
+      <line x1="31" y1="30" x2="80" y2="32" stroke="#6366f1" stroke-width="3" stroke-linecap="round"/>
+      <line x1="55" y1="32" x2="52" y2="55" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="55" y1="32" x2="58" y2="55" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="80" y1="32" x2="78" y2="62" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="80" y1="32" x2="102" y2="55" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="27" y1="22" x2="32" y2="17" stroke="#f59e0b" stroke-width="2" stroke-linecap="round"/>
+      <text x="30" y="72" font-size="9" fill="#6366f1">反対側回転</text>
+    </svg>`
+  },
+  {
+    title: "ステップ4: 起き上がり",
+    duration: 10,
+    instruction: "ゆっくりと座位に戻る。座ったらしばらく静止して体を安定させる。これを1セットとし、1日3〜5回行う。",
+    svg: `<svg viewBox="0 0 120 100" class="w-24 h-20 mx-auto">
+      <ellipse cx="60" cy="18" rx="11" ry="11" fill="#c7d2fe" stroke="#6366f1" stroke-width="2"/>
+      <line x1="60" y1="29" x2="60" y2="62" stroke="#6366f1" stroke-width="3" stroke-linecap="round"/>
+      <line x1="60" y1="42" x2="38" y2="52" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="60" y1="42" x2="82" y2="52" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="60" y1="62" x2="48" y2="85" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="60" y1="62" x2="72" y2="85" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round"/>
+      <text x="35" y="95" font-size="9" fill="#22c55e">完了！</text>
+    </svg>`
+  }
+];
+
+const SEMONT_STEPS = [
+  {
+    title: "ステップ1: 健側向き座位",
+    duration: 30,
+    instruction: "ベッドの中央に座り、頭を健側（めまいのない側）に45度向ける。",
+    svg: `<svg viewBox="0 0 120 100" class="w-24 h-20 mx-auto">
+      <ellipse cx="60" cy="20" rx="12" ry="12" fill="#fde68a" stroke="#d97706" stroke-width="2"/>
+      <line x1="60" y1="32" x2="60" y2="65" stroke="#d97706" stroke-width="3" stroke-linecap="round"/>
+      <line x1="60" y1="45" x2="35" y2="55" stroke="#d97706" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="60" y1="45" x2="85" y2="55" stroke="#d97706" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="60" y1="65" x2="45" y2="90" stroke="#d97706" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="60" y1="65" x2="75" y2="90" stroke="#d97706" stroke-width="2.5" stroke-linecap="round"/>
+      <text x="30" y="80" font-size="9" fill="#d97706">健側向き</text>
+    </svg>`
+  },
+  {
+    title: "ステップ2: 患側横向きに倒れる",
+    duration: 30,
+    instruction: "素早く患側（めまいのある側）に横向きに倒れる。頭の向きは変えない。めまいが治まるまで保持。",
+    svg: `<svg viewBox="0 0 140 80" class="w-32 h-16 mx-auto">
+      <ellipse cx="118" cy="28" rx="11" ry="11" fill="#fde68a" stroke="#d97706" stroke-width="2"/>
+      <line x1="107" y1="28" x2="58" y2="30" stroke="#d97706" stroke-width="3" stroke-linecap="round"/>
+      <line x1="80" y1="30" x2="78" y2="55" stroke="#d97706" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="80" y1="30" x2="82" y2="55" stroke="#d97706" stroke-width="2.5" stroke-linecap="round"/>
+      <text x="45" y="70" font-size="9" fill="#d97706">患側横臥</text>
+    </svg>`
+  },
+  {
+    title: "ステップ3: 反対側に素早く回転",
+    duration: 30,
+    instruction: "素早く反対側（健側）の横向きに体全体を回転させる。頭の向きを変えずに行う。",
+    svg: `<svg viewBox="0 0 140 80" class="w-32 h-16 mx-auto">
+      <ellipse cx="20" cy="28" rx="11" ry="11" fill="#fde68a" stroke="#d97706" stroke-width="2"/>
+      <line x1="31" y1="28" x2="80" y2="30" stroke="#d97706" stroke-width="3" stroke-linecap="round"/>
+      <line x1="58" y1="30" x2="56" y2="55" stroke="#d97706" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="58" y1="30" x2="60" y2="55" stroke="#d97706" stroke-width="2.5" stroke-linecap="round"/>
+      <text x="55" y="70" font-size="9" fill="#22c55e">完了</text>
+    </svg>`
+  }
+];
+
+const BRANDT_STEPS = [
+  {
+    title: "1. 開始姿勢: ベッド中央座位",
+    duration: 30,
+    instruction: "ベッドの中央に座る。背筋を伸ばし正面を向く。",
+    svg: `<svg viewBox="0 0 120 100" class="w-24 h-20 mx-auto">
+      <ellipse cx="60" cy="20" rx="11" ry="11" fill="#bbf7d0" stroke="#16a34a" stroke-width="2"/>
+      <line x1="60" y1="31" x2="60" y2="65" stroke="#16a34a" stroke-width="3" stroke-linecap="round"/>
+      <line x1="60" y1="44" x2="37" y2="54" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="60" y1="44" x2="83" y2="54" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="60" y1="65" x2="47" y2="88" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="60" y1="65" x2="73" y2="88" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round"/>
+    </svg>`
+  },
+  {
+    title: "2. 右側臥位",
+    duration: 30,
+    instruction: "右側に素早く横向きになる。頭は枕から出てやや下向き。めまいが治まるまで待つ。",
+    svg: `<svg viewBox="0 0 140 80" class="w-32 h-16 mx-auto">
+      <ellipse cx="118" cy="30" rx="11" ry="11" fill="#bbf7d0" stroke="#16a34a" stroke-width="2"/>
+      <line x1="107" y1="30" x2="55" y2="32" stroke="#16a34a" stroke-width="3" stroke-linecap="round"/>
+      <text x="30" y="68" font-size="9" fill="#16a34a">右側臥位</text>
+    </svg>`
+  },
+  {
+    title: "3. 座位に戻る",
+    duration: 30,
+    instruction: "ゆっくりと座位に戻る。30秒静止する。",
+    svg: `<svg viewBox="0 0 120 100" class="w-24 h-20 mx-auto">
+      <ellipse cx="60" cy="20" rx="11" ry="11" fill="#bbf7d0" stroke="#16a34a" stroke-width="2"/>
+      <line x1="60" y1="31" x2="60" y2="65" stroke="#16a34a" stroke-width="3" stroke-linecap="round"/>
+      <text x="35" y="95" font-size="9" fill="#16a34a">座位復帰</text>
+    </svg>`
+  },
+  {
+    title: "4. 左側臥位",
+    duration: 30,
+    instruction: "左側に素早く横向きになる。めまいが治まるまで待つ。",
+    svg: `<svg viewBox="0 0 140 80" class="w-32 h-16 mx-auto">
+      <ellipse cx="20" cy="30" rx="11" ry="11" fill="#bbf7d0" stroke="#16a34a" stroke-width="2"/>
+      <line x1="31" y1="30" x2="82" y2="32" stroke="#16a34a" stroke-width="3" stroke-linecap="round"/>
+      <text x="55" y="68" font-size="9" fill="#16a34a">左側臥位</text>
+    </svg>`
+  },
+  {
+    title: "5. 座位に戻り完了",
+    duration: 30,
+    instruction: "ゆっくり座位に戻り1分間静止。これを1セットとして1日3回（朝・昼・夜）行う。",
+    svg: `<svg viewBox="0 0 120 100" class="w-24 h-20 mx-auto">
+      <ellipse cx="60" cy="20" rx="11" ry="11" fill="#bbf7d0" stroke="#16a34a" stroke-width="2"/>
+      <line x1="60" y1="31" x2="60" y2="65" stroke="#16a34a" stroke-width="3" stroke-linecap="round"/>
+      <text x="30" y="95" font-size="9" fill="#22c55e">1セット完了！</text>
+    </svg>`
+  }
+];
+
+let stepTimerInterval = null;
+let stepTimerRemaining = 30;
+let stepTimerTotal = 30;
+
+function renderManeuverSteps(steps, containerId, colorClass) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+  steps.forEach((step, i) => {
+    const card = document.createElement('div');
+    card.className = 'bg-white rounded-xl border border-indigo-100 shadow-sm p-4';
+
+    const topRow = document.createElement('div');
+    topRow.className = 'flex items-center gap-3 mb-3';
+    const badge = document.createElement('span');
+    badge.className = `w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0 ${colorClass}`;
+    badge.textContent = String(i + 1);
+    const titleEl = document.createElement('p');
+    titleEl.className = 'text-sm font-bold text-stone-800 flex-1';
+    titleEl.textContent = step.title;
+    const durBadge = document.createElement('span');
+    durBadge.className = 'text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full flex-shrink-0';
+    durBadge.textContent = `${step.duration}秒`;
+    topRow.appendChild(badge);
+    topRow.appendChild(titleEl);
+    topRow.appendChild(durBadge);
+
+    const svgWrap = document.createElement('div');
+    svgWrap.className = 'my-3 flex justify-center';
+    svgWrap.innerHTML = step.svg;
+
+    const inst = document.createElement('p');
+    inst.className = 'text-xs text-stone-600 leading-relaxed mb-3';
+    inst.textContent = step.instruction;
+
+    const btn = document.createElement('button');
+    btn.className = 'w-full py-2 bg-indigo-600 text-white rounded-lg text-xs font-semibold hover:bg-indigo-700';
+    btn.textContent = 'タイマー開始';
+    btn.setAttribute('aria-label', `${step.title}のタイマーを開始`);
+    btn.addEventListener('click', () => openStepTimer(step));
+
+    card.appendChild(topRow);
+    card.appendChild(svgWrap);
+    card.appendChild(inst);
+    card.appendChild(btn);
+    container.appendChild(card);
+  });
+}
+
+function openStepTimer(step) {
+  stepTimerRemaining = step.duration;
+  stepTimerTotal = step.duration;
+  document.getElementById('step-timer-title').textContent = step.title;
+  document.getElementById('step-timer-inst').textContent = step.instruction;
+  document.getElementById('step-timer-display').textContent = step.duration;
+  document.getElementById('step-timer-bar').style.width = '100%';
+  document.getElementById('step-timer-modal').classList.remove('hidden');
+  clearInterval(stepTimerInterval);
+  stepTimerInterval = setInterval(() => {
+    stepTimerRemaining--;
+    document.getElementById('step-timer-display').textContent = stepTimerRemaining;
+    const pct = (stepTimerRemaining / stepTimerTotal) * 100;
+    document.getElementById('step-timer-bar').style.width = pct + '%';
+    if (stepTimerRemaining <= 0) {
+      clearInterval(stepTimerInterval);
+      document.getElementById('step-timer-display').textContent = '完了！';
+    }
+  }, 1000);
+}
+
+document.getElementById('step-timer-close').addEventListener('click', () => {
+  clearInterval(stepTimerInterval);
+  document.getElementById('step-timer-modal').classList.add('hidden');
+});
+
+// Tabs
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+    document.querySelectorAll('.tab-btn').forEach(b => {
+      b.classList.remove('bg-indigo-100', 'border-b-2', 'border-indigo-600', 'text-indigo-700');
+      b.classList.add('text-stone-500');
+    });
+    btn.classList.add('bg-indigo-100', 'border-b-2', 'border-indigo-600', 'text-indigo-700');
+    btn.classList.remove('text-stone-500');
+    document.getElementById('tab-' + btn.dataset.tab).classList.remove('hidden');
+    if (btn.dataset.tab === 'tracking') renderSymptomChart();
+  });
+});
+
+// Symptom tracking
+document.getElementById('dizziness-score').addEventListener('input', function() {
+  document.getElementById('dizziness-val').textContent = this.value;
+});
+document.getElementById('nausea-score').addEventListener('input', function() {
+  document.getElementById('nausea-val').textContent = this.value;
+});
+
+function getSymptomLog() {
+  return JSON.parse(localStorage.getItem('vestibular-symptom-log') || '[]');
+}
+function saveSymptomLog(log) {
+  localStorage.setItem('vestibular-symptom-log', JSON.stringify(log));
+}
+
+document.getElementById('log-symptom-btn').addEventListener('click', () => {
+  const dizziness = parseInt(document.getElementById('dizziness-score').value);
+  const nausea = parseInt(document.getElementById('nausea-score').value);
+  const today = new Date().toISOString().slice(0, 10);
+  const log = getSymptomLog();
+  const idx = log.findIndex(e => e.date === today);
+  const entry = { date: today, dizziness, nausea };
+  if (idx >= 0) log[idx] = entry;
+  else log.push(entry);
+  if (log.length > 30) log.splice(0, log.length - 30);
+  saveSymptomLog(log);
+  renderSymptomChart();
+  alert('記録しました！');
+});
+
+function renderSymptomChart() {
+  const log = getSymptomLog();
+  const recent = log.slice(-7);
+  const g = document.getElementById('symptom-chart-data');
+  g.innerHTML = '';
+
+  if (recent.length === 0) {
+    const noData = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    noData.setAttribute('x', '200'); noData.setAttribute('y', '90');
+    noData.setAttribute('text-anchor', 'middle'); noData.setAttribute('font-size', '12');
+    noData.setAttribute('fill', '#94a3b8'); noData.textContent = 'データなし';
+    g.appendChild(noData); return;
+  }
+
+  const W = 340, H = 130, PL = 40, PT = 20;
+  const stepX = recent.length > 1 ? W / (recent.length - 1) : W / 2;
+
+  const drawLine = (data, key, color) => {
+    const pts = data.map((d, i) => ({
+      x: PL + (data.length === 1 ? W/2 : i * stepX),
+      y: PT + H - (d[key] / 10) * H
+    }));
+    if (pts.length > 1) {
+      const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+      poly.setAttribute('points', pts.map(p => `${p.x},${p.y}`).join(' '));
+      poly.setAttribute('fill', 'none');
+      poly.setAttribute('stroke', color);
+      poly.setAttribute('stroke-width', '2');
+      g.appendChild(poly);
+    }
+    pts.forEach((p, i) => {
+      const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      c.setAttribute('cx', p.x); c.setAttribute('cy', p.y);
+      c.setAttribute('r', '4'); c.setAttribute('fill', color);
+      g.appendChild(c);
+    });
+  };
+
+  drawLine(recent, 'dizziness', '#6366f1');
+  drawLine(recent, 'nausea', '#a855f7');
+
+  recent.forEach((d, i) => {
+    const x = PL + (recent.length === 1 ? W/2 : i * stepX);
+    const dateLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    dateLabel.setAttribute('x', x); dateLabel.setAttribute('y', 168);
+    dateLabel.setAttribute('text-anchor', 'middle'); dateLabel.setAttribute('font-size', '8');
+    dateLabel.setAttribute('fill', '#94a3b8'); dateLabel.textContent = d.date.slice(5);
+    g.appendChild(dateLabel);
+  });
+
+  const hist = document.getElementById('symptom-history');
+  hist.innerHTML = '';
+  [...recent].reverse().forEach(e => {
+    const row = document.createElement('div');
+    row.className = 'flex justify-between text-xs text-stone-600 py-1 border-b border-stone-100';
+    const dateEl = document.createElement('span');
+    dateEl.textContent = e.date;
+    const scores = document.createElement('span');
+    scores.className = 'text-indigo-700 font-semibold';
+    scores.textContent = `めまい:${e.dizziness} 吐き気:${e.nausea}`;
+    row.appendChild(dateEl); row.appendChild(scores);
+    hist.appendChild(row);
+  });
+}
+
+renderManeuverSteps(EPLEY_STEPS, 'epley-steps', 'bg-indigo-600');
+renderManeuverSteps(SEMONT_STEPS, 'semont-steps', 'bg-amber-500');
+renderManeuverSteps(BRANDT_STEPS, 'brandt-steps', 'bg-green-600');
+</script>
+</body>
+</html>
